@@ -1,0 +1,56 @@
+# Data Preprocessing Template
+
+# Importing the dataset
+dataset = read.csv('Position_Salaries.csv')
+dataset = dataset[2:3]
+
+# Splitting the dataset into the Training set and Test set
+# install.packages('caTools')
+# library(caTools)
+# set.seed(123)
+# split = sample.split(dataset$DependentVariable, SplitRatio = 0.8)
+# training_set = subset(dataset, split == TRUE)
+# test_set = subset(dataset, split == FALSE)
+
+# Feature Scaling
+# training_set = scale(training_set)
+# test_set = scale(test_set)
+
+#linear regression
+linreg = lm(formula = Salary ~ Level,
+            data = dataset)
+#polynomial regression
+dataset$Level2 = dataset$Level^2
+dataset$Level3 = dataset$Level^3
+dataset$Level4 = dataset$Level^4
+polyreg = lm(formula = Salary~.,
+             data = dataset)
+
+#visualising the plots
+library(ggplot2)
+ggplot()+
+  geom_point(aes(x = dataset$Level, y = dataset$Salary),
+             colour = 'red') +
+  geom_line(aes(x = dataset$Level, y = predict(linreg, newdata = dataset)),
+            colour = 'blue') +
+  ggtitle("Truth or bluff") +
+  xlab("Level") +
+  ylab("Salary")
+#polynomial
+ggplot()+
+  geom_point(aes(x = dataset$Level, y = dataset$Salary),
+             colour = 'red') +
+  geom_line(aes(x = dataset$Level, y = predict(polyreg, newdata = dataset)),
+            colour = 'blue') +
+  ggtitle("Truth or bluff") +
+  xlab("Level") +
+  ylab("Salary")
+  
+#prediction of single value that was not in the data set
+y_pred = predict(linreg, data.frame(Level = 6.5))
+
+#prediction of single value that was not in the data set
+y_pred = predict(polyreg, data.frame(Level = 6.5,
+                                     Level2 = 6.5^2,
+                                     Level3 = 6.5^3,
+                                     Level4 = 6.5^4))
